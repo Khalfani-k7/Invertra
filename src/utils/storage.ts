@@ -43,12 +43,20 @@ export const storage = {
     return localStorage.getItem(KEYS.USER_EMAIL)
   },
 
+  clearUserEmail(): void {
+    localStorage.removeItem(KEYS.USER_EMAIL)
+  },
+
   setAdminEmail(email: string): void {
     localStorage.setItem(KEYS.ADMIN_EMAIL, email)
   },
 
   getAdminEmail(): string | null {
     return localStorage.getItem(KEYS.ADMIN_EMAIL)
+  },
+
+  clearAdminEmail(): void {
+    localStorage.removeItem(KEYS.ADMIN_EMAIL)
   },
 
   /* Reservations Storage */

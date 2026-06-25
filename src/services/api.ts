@@ -4,17 +4,19 @@ const BASE_URL = 'https://reservationapi-production-b690.up.railway.app'
 
 export class APIClient {
   private baseUrl: string = BASE_URL
+  private token: string | null = null
+
+  setToken(token: string | null): void {
+    this.token = token
+  }
 
   private getHeaders(includeAuth: boolean = true): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     }
 
-    if (includeAuth) {
-      const token = localStorage.getItem('auth_token') || localStorage.getItem('admin_token')
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
+    if (includeAuth && this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`
     }
 
     return headers
