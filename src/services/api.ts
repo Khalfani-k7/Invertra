@@ -1,4 +1,4 @@
-import type { AuthResponse, Product, Metric, Order } from '../types'
+import type { RegisterResponse, LoginResponse, Product, Metric, Order } from '../types'
 
 const BASE_URL = 'https://reservationapi-production-b690.up.railway.app'
 
@@ -47,20 +47,20 @@ export class APIClient {
   }
 
   /* AUTH ENDPOINTS */
-  async registerUser(email: string, password: string): Promise<AuthResponse> {
+  async registerUser(email: string, password: string): Promise<RegisterResponse> {
     return this.request('/auth/register', 'POST', { email, password }, false)
   }
 
-  async loginUser(email: string, password: string): Promise<AuthResponse> {
+  async loginUser(email: string, password: string): Promise<LoginResponse> {
     return this.request('/auth/login', 'POST', { email, password }, false)
   }
 
   // Admin uses same endpoints as users (distinguished by role in backend)
-  async registerAdmin(email: string, password: string): Promise<AuthResponse> {
+  async registerAdmin(email: string, password: string): Promise<RegisterResponse> {
     return this.request('/auth/register', 'POST', { email, password, role: 'admin' }, false)
   }
 
-  async loginAdmin(email: string, password: string): Promise<AuthResponse> {
+  async loginAdmin(email: string, password: string): Promise<LoginResponse> {
     return this.request('/auth/login', 'POST', { email, password }, false)
   }
 

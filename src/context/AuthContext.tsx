@@ -47,13 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null)
       setLoading(true)
-      const response = await apiClient.registerUser(email, password)
-      storage.setAuthToken(response.token)
-      storage.setUserEmail(response.user.email)
+      await apiClient.registerUser(email, password)
+      const loginResponse = await apiClient.loginUser(email, password)
+      storage.setAuthToken(loginResponse.access_token)
+      storage.setUserEmail(email)
       setUser({
-        id: response.user.id,
-        email: response.user.email,
-        token: response.token,
+        id: email,
+        email,
+        token: loginResponse.access_token,
         role: 'user',
       })
     } catch (err) {
@@ -70,12 +71,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null)
       setLoading(true)
       const response = await apiClient.loginUser(email, password)
-      storage.setAuthToken(response.token)
-      storage.setUserEmail(response.user.email)
+      storage.setAuthToken(response.access_token)
+      storage.setUserEmail(email)
       setUser({
-        id: response.user.id,
-        email: response.user.email,
-        token: response.token,
+        id: email,
+        email,
+        token: response.access_token,
         role: 'user',
       })
     } catch (err) {
@@ -91,13 +92,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null)
       setLoading(true)
-      const response = await apiClient.registerAdmin(email, password)
-      storage.setAdminToken(response.token)
-      storage.setAdminEmail(response.user.email)
+      await apiClient.registerAdmin(email, password)
+      const loginResponse = await apiClient.loginAdmin(email, password)
+      storage.setAdminToken(loginResponse.access_token)
+      storage.setAdminEmail(email)
       setAdmin({
-        id: response.user.id,
-        email: response.user.email,
-        token: response.token,
+        id: email,
+        email,
+        token: loginResponse.access_token,
         role: 'admin',
       })
     } catch (err) {
@@ -114,12 +116,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null)
       setLoading(true)
       const response = await apiClient.loginAdmin(email, password)
-      storage.setAdminToken(response.token)
-      storage.setAdminEmail(response.user.email)
+      storage.setAdminToken(response.access_token)
+      storage.setAdminEmail(email)
       setAdmin({
-        id: response.user.id,
-        email: response.user.email,
-        token: response.token,
+        id: email,
+        email,
+        token: response.access_token,
         role: 'admin',
       })
     } catch (err) {

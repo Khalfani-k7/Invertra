@@ -43,13 +43,13 @@ export interface Metric {
 }
 
 /* Auth Types */
-export interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    role: 'user' | 'admin';
-  };
+export interface RegisterResponse {
+  id: string;
+  email: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
 }
 
 /* Local Storage Types */
