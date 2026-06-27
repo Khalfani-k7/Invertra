@@ -10,7 +10,7 @@ import { apiClient } from '../services/api'
 export function CheckoutPage() {
   const navigate = useNavigate()
   const { isAuthenticated, user } = useAuth()
-  const { reservations, completeCheckout, removeReservation } = useReservations()
+  const { reservations, removeReservation } = useReservations()
   const [products, setProducts] = useState<Map<string, Product>>(new Map())
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,19 +78,17 @@ export function CheckoutPage() {
 
     try {
       setLoading(true)
-      await completeCheckout(formData)
-      setOrderPlaced(true)
 
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        navigate('/')
-      }, 2000)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Checkout failed'
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
+      const payment = await apiClient.initiatePayment(reservations[0].id)
+
+      // Redirect to Paystack
+      window.location.href = payment.authorization_url
+          } catch (err) {
+            const message = err instanceof Error ? err.message : 'Checkout failed'
+            setError(message)
+          } finally {
+            setLoading(false)
+          }
   }
 
   if (!isAuthenticated) {
