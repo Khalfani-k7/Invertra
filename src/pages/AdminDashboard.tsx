@@ -65,7 +65,7 @@ export function AdminDashboard() {
       const newProduct = await apiClient.createProduct({
         name: formData.name,
         description: formData.description,
-        price: formData.price,
+        price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
       })
 

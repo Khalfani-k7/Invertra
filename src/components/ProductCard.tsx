@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import type { Product } from '../types'
 import { displayPrice } from '../utils/currency'
 import { useReservations } from '../context/ReservationContext'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 interface ProductCardProps {
   product: Product
@@ -12,8 +14,17 @@ export function ProductCard({ product, onReserveSuccess }: ProductCardProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { reserve } = useReservations()
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
 
   const handleReserve = async () => {
+    if (!isAuthenticated) {
+      navigate('/login', {
+      state: { from: '/products' }
+    })
+    return
+}
+
     try {
       setError(null)
       setLoading(true)

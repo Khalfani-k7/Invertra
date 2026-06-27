@@ -23,30 +23,46 @@ export class APIClient {
   }
 
   private async request<T>(
-    endpoint: string,
-    method: string = 'GET',
-    body?: unknown,
-    includeAuth: boolean = true
-  ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`
-    const options: RequestInit = {
-      method,
-      headers: this.getHeaders(includeAuth),
-    }
+  endpoint: string,
+  method: string = 'GET',
+  body?: unknown,
+  includeAuth: boolean = true
+): Promise<T> {
+  const url = `${this.baseUrl}${endpoint}`
 
-    if (body) {
-      options.body = JSON.stringify(body)
-    }
+  const options: RequestInit = {
+    method,
+    headers: this.getHeaders(includeAuth),
+  }
 
+  if (body) {
+    options.body = JSON.stringify(body)
+  }
+
+  console.log('Request URL:', url)
+  console.log('Request Options:', options)
+
+  try {
     const response = await fetch(url, options)
+
+    console.log('Response Status:', response.status)
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}))
+      console.error('API Error:', error)
       throw new Error(error.message || `API Error: ${response.statusText}`)
     }
 
-    return response.json()
+    const data = await response.json()
+
+    console.log('Response Data:', data)
+
+    return data as T
+  } catch (err) {
+    console.error('Fetch Error:', err)
+    throw err
   }
+}
 
   /* AUTH ENDPOINTS */
   async registerUser(email: string, password: string): Promise<RegisterResponse> {
@@ -89,18 +105,35 @@ export class APIClient {
   }
 
   /* RESERVATION ENDPOINTS */
-  async createReservation(productId: string, quantity: number): Promise<{ 
-    id: string
-    expiresAt: number
-    productId: string
-    quantity: number
-  }> {
-    return this.request('/reservations/reserve', 'POST', { productId, quantity })
-  }
+  async createReservation(
+  productId: string,
+  quantity: number
+): Promise<{
+  reservationId: string
+  expiresAt: string
+  message: string
+}> {
+  return this.request(
+    '/reservations/reserve',
+    'POST',
+    { productId, quantity }
+  )
+}
 
-  async completeCheckout(reservationIds: string[], checkoutData: Record<string, unknown>): Promise<Order> {
-    return this.request('/reservations/checkout', 'POST', { reservationIds, ...checkoutData })
-  }
+  //Checkout Endpoint
+  async initiatePayment(
+  reservationId: string
+): Promise<{
+  authorization_url: string
+  access_code: string
+  reference: string
+}> {
+  return this.request(
+    '/payments/initiate',
+    'POST',
+    { reservationId }
+  )
+}
 
   /* METRICS ENDPOINTS */
   async getMetrics(): Promise<Metric> {

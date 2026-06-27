@@ -11,7 +11,6 @@ interface ReservationContextType {
   removeReservation: (id: string) => void
   getExpiredReservations: () => StoredReservation[]
   clearExpiredReservations: () => void
-  completeCheckout: (checkoutData: Record<string, unknown>) => Promise<void>
   getReservationWithProduct: (reservation: StoredReservation, product: Product | undefined) => StoredReservation & { product?: Product }
 }
 
@@ -55,14 +54,14 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
       const response = await apiClient.createReservation(productId, quantity)
       
       const newReservation: StoredReservation = {
-        id: response.id,
-        productId: response.productId,
-        userId: '', // Will be set from token if available
-        quantity: response.quantity,
-        expiresAt: response.expiresAt,
+        id: response.reservationId,
+        productId,
+        userId: '',
+        quantity,
+        expiresAt: new Date(response.expiresAt).getTime(),
         createdAt: Date.now(),
         status: 'active',
-      }
+}
 
       setReservations(prev => {
         const updated = [...prev, newReservation]
@@ -96,25 +95,7 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
     expired.forEach(r => removeReservation(r.id))
   }, [getExpiredReservations, removeReservation])
 
-  const completeCheckout = useCallback(async (checkoutData: Record<string, unknown>) => {
-    try {
-      setError(null)
-      setLoading(true)
-      const reservationIds = reservations.map(r => r.id)
-      
-      await apiClient.completeCheckout(reservationIds, checkoutData)
-      
-      /* Clear reservations after successful checkout */
-      setReservations([])
-      storage.clearReservations()
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Checkout failed'
-      setError(message)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [reservations])
+  
 
   const getReservationWithProduct = useCallback(
     (reservation: StoredReservation, product: Product | undefined) => ({
@@ -134,7 +115,6 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
         removeReservation,
         getExpiredReservations,
         clearExpiredReservations,
-        completeCheckout,
         getReservationWithProduct,
       }}
     >
