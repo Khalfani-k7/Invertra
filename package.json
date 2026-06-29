@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "batch": "^0.6.1",
     "clsx": "^2.1.1",
     "react": "^19",
     "react-dom": "^19",

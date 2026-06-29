@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { Product } from '../types'
 import { displayPrice } from '../utils/currency'
 import { useReservations } from '../context/ReservationContext'
@@ -11,11 +11,13 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onReserveSuccess }: ProductCardProps) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const { reserve } = useReservations()
+ const [loading, setLoading] = useState(false)
+const [error, setError] = useState<string | null>(null)
+const [quantity, setQuantity] = useState(1)
+const { reserve } = useReservations()
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const isOutOfStock = product.stock <= 0
 
   const handleReserve = async () => {
     if (!isAuthenticated) {
@@ -38,7 +40,7 @@ export function ProductCard({ product, onReserveSuccess }: ProductCardProps) {
     }
   }
 
-  const isOutOfStock = product.stock <= 0
+
 
   return (
     <div className="card flex flex-col h-full hover:border-primary/50 transition-colors group">
