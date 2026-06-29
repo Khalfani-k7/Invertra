@@ -122,8 +122,8 @@ export class APIClient {
 
   //Checkout Endpoint
   async initiatePayment(
-  reservationId: string
-): Promise<{
+  reservationId: string, 
+  _callbackUrl: string): Promise<{
   authorization_url: string
   access_code: string
   reference: string

@@ -6,6 +6,7 @@ import { ReservationTimer } from '../components/ReservationTimer'
 import { displayPrice } from '../utils/currency'
 import type { Product, CheckoutData } from '../types'
 import { apiClient } from '../services/api'
+const PENDING_PAYMENT_KEY = 'invertra_pending_payment'
 
 export function CheckoutPage() {
   const navigate = useNavigate()
@@ -79,10 +80,20 @@ export function CheckoutPage() {
     try {
       setLoading(true)
 
-      const payment = await apiClient.initiatePayment(reservations[0].id)
+      const callbackUrl = `${window.location.origin}/payment/success`
+const payment = await apiClient.initiatePayment(reservations[0].id, callbackUrl)
 
-      // Redirect to Paystack
-      window.location.href = payment.authorization_url
+sessionStorage.setItem(
+  PENDING_PAYMENT_KEY,
+  JSON.stringify({
+    reference: payment.reference,
+    reservationId: reservations[0].id,
+    amount: totalPrice,
+  })
+)
+
+// Redirect to Paystack
+window.location.href = payment.authorization_url
           } catch (err) {
             const message = err instanceof Error ? err.message : 'Checkout failed'
             setError(message)

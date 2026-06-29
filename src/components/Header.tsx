@@ -8,6 +8,10 @@ export function Header() {
   const location = useLocation()
   const { user, admin, isAuthenticated, isAdminAuthenticated, userLogout, adminLogout } = useAuth()
   const { reservations } = useReservations()
+  const cartItemCount = reservations.reduce(
+  (total, reservation) => total + reservation.quantity,
+  0
+)
 
   const handleUserLogout = () => {
     userLogout()
@@ -44,9 +48,9 @@ export function Header() {
                   }`}
                 >
                   Cart
-                  {reservations.length > 0 && (
+                  {cartItemCount > 0 &&  (
                     <span className="absolute -top-2 -right-2 bg-accent text-background text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                      {reservations.length}
+                      {cartItemCount}
                     </span>
                   )}
                 </Link>

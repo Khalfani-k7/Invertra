@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import type { Product } from '../types'
 import { displayPrice } from '../utils/currency'
 import { useReservations } from '../context/ReservationContext'
@@ -18,6 +18,7 @@ const { reserve } = useReservations()
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const isOutOfStock = product.stock <= 0
+  const maxQuantity = product.stock
 
   const handleReserve = async () => {
     if (!isAuthenticated) {
@@ -30,7 +31,7 @@ const { reserve } = useReservations()
     try {
       setError(null)
       setLoading(true)
-      await reserve(product.id, 1)
+     await reserve(product.id, quantity)
       onReserveSuccess?.()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reserve'
@@ -40,7 +41,13 @@ const { reserve } = useReservations()
     }
   }
 
+  const decreaseQuantity = () => {
+    setQuantity((prev) => Math.max(1, prev - 1))
+  }
 
+  const increaseQuantity = () => {
+    setQuantity((prev) => Math.min(maxQuantity, prev + 1))
+  }
 
   return (
     <div className="card flex flex-col h-full hover:border-primary/50 transition-colors group">
@@ -72,6 +79,35 @@ const { reserve } = useReservations()
           <span className="text-2xl font-bold text-primary">{displayPrice(product.price)}</span>
           <span className="text-xs text-muted">Stock: {product.stock}</span>
         </div>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <span className="text-sm font-semibold">Quantity</span>
+
+  <div className="flex items-center border border-border rounded-lg overflow-hidden">
+    <button
+      type="button"
+      onClick={decreaseQuantity}
+      disabled={isOutOfStock || loading || quantity <= 1}
+      className="w-10 h-10 flex items-center justify-center bg-background hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      aria-label="Decrease quantity"
+    >
+      -
+    </button>
+
+    <span className="w-12 h-10 flex items-center justify-center bg-secondary font-semibold">
+      {quantity}
+    </span>
+
+    <button
+      type="button"
+      onClick={increaseQuantity}
+      disabled={isOutOfStock || loading || quantity >= maxQuantity}
+      className="w-10 h-10 flex items-center justify-center bg-background hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      aria-label="Increase quantity"
+    >
+      +
+    </button>
+  </div>
+</div>
       </div>
 
       {/* Reserve Button */}
@@ -84,7 +120,7 @@ const { reserve } = useReservations()
             : 'btn-primary hover:shadow-lg hover:shadow-primary/50'
         } ${loading ? 'opacity-75' : ''}`}
       >
-        {loading ? 'Reserving...' : isOutOfStock ? 'Unavailable' : 'Reserve Now'}
+        {loading ? 'Reserving...' : isOutOfStock ? 'Unavailable' : `Reserve ${quantity}`}
       </button>
 
       {error && <p className="text-xs text-accent mt-2">{error}</p>}
