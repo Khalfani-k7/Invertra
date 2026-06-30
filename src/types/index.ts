@@ -5,6 +5,7 @@ export interface Product {
   description: string;
   price: string | number; // API returns as string "3000"
   stock: number;
+  imageUrl?: string; // URL to product image from backend
   createdAt: string;
   updatedAt: string;
 }

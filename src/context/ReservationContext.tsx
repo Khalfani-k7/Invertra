@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { StoredReservation, Product } from '../types'
 import { storage } from '../utils/storage'
 import { apiClient } from '../services/api'
+import { useAuth } from './AuthContext'
 
 interface ReservationContextType {
   reservations: StoredReservation[]
@@ -22,12 +23,18 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
   const [reservations, setReservations] = useState<StoredReservation[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth()
 
-  /* Initialize from localStorage */
+    /* Initialize from localStorage only when user is authenticated */
   useEffect(() => {
-    const stored = storage.getReservations()
-    setReservations(stored)
-  }, [])
+    if (user) {
+      const stored = storage.getReservations()
+      setReservations(stored)
+    } else {
+      /* Clear reservations when user logs out */
+      setReservations([])
+    }
+  }, [user])
 
   /* Check for expired reservations every second */
   useEffect(() => {

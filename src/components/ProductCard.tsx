@@ -53,10 +53,23 @@ const { reserve } = useReservations()
     <div className="card flex flex-col h-full hover:border-primary/50 transition-colors group">
       {/* Product Image */}
       <div className="relative w-full h-48 md:h-56 mb-4 overflow-hidden rounded-lg bg-secondary flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl font-bold text-primary/20 mb-2">📦</div>
-          <p className="text-xs text-muted">{product.name}</p>
-        </div>
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              // Fallback if image fails to load
+              const target = e.target as HTMLImageElement
+              target.style.display = 'none'
+            }}
+          />
+        ) : (
+          <div className="text-center">
+            <div className="text-4xl font-bold text-primary/20 mb-2">📦</div>
+            <p className="text-xs text-muted">{product.name}</p>
+          </div>
+        )}
         {isOutOfStock && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="text-white font-semibold">Out of Stock</span>
