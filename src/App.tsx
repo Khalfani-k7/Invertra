@@ -21,7 +21,7 @@ export function App() {
         <Route path="/login" element={<UserLoginPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment/success" element={<PaymentSuccessPage />} />
-
+        
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />

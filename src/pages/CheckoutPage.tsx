@@ -80,27 +80,46 @@ export function CheckoutPage() {
     try {
       setLoading(true)
 
-      const callbackUrl = `${window.location.origin}/payment/success`
-const payment = await apiClient.initiatePayment(reservations[0].id, callbackUrl)
-
-sessionStorage.setItem(
-  PENDING_PAYMENT_KEY,
-  JSON.stringify({
-    reference: payment.reference,
-    reservationId: reservations[0].id,
-    amount: totalPrice,
-  })
+    console.log(
+    reservations.map(r => ({
+    id: r.id,
+    quantity: r.quantity,
+    product: products.get(r.productId)?.name,
+    price: products.get(r.productId)?.price,
+  }))
 )
 
-// Redirect to Paystack
-window.location.href = payment.authorization_url
-          } catch (err) {
-            const message = err instanceof Error ? err.message : 'Checkout failed'
-            setError(message)
-          } finally {
-            setLoading(false)
-          }
-  }
+  console.log("Frontend Total:", totalPrice)
+
+  const reservationIds = reservations.map(r => r.id)
+
+  console.log("Sending reservationIds:", reservationIds)
+
+  const callbackUrl = `${window.location.origin}/payment/success`
+
+  const payment = await apiClient.initiatePayment(
+    reservationIds
+  )
+
+  // Save payment details before leaving the site
+  sessionStorage.setItem(
+    PENDING_PAYMENT_KEY,
+    JSON.stringify({
+      reference: payment.reference,
+      reservationIds,
+      amount: totalPrice,
+    })
+  )
+
+  // Redirect to Paystack
+  window.location.href = payment.authorization_url
+            } catch (err) {
+              const message = err instanceof Error ? err.message : 'Checkout failed'
+              setError(message)
+            } finally {
+              setLoading(false)
+            }
+    }
 
   if (!isAuthenticated) {
     return null

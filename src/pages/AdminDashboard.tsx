@@ -19,6 +19,7 @@ export function AdminDashboard() {
     price: '',
     stock: '',
   })
+  const [image, setImage] = useState<File | null>(null)
 
   // Redirect if not admin authenticated
   useEffect(() => {
@@ -61,13 +62,21 @@ export function AdminDashboard() {
       return
     }
 
+    if (!image) {
+      setError('Please select a product image')
+      return
+  }
+
     try {
-      const newProduct = await apiClient.createProduct({
-        name: formData.name,
-        description: formData.description,
-        price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
-      })
+      const productData = new FormData()
+
+      productData.append('name', formData.name)
+      productData.append('description', formData.description)
+      productData.append('price', formData.price)
+      productData.append('stock', formData.stock)
+      productData.append('image', image!)
+
+      const newProduct = await apiClient.createProduct(productData)
 
       setProducts(prev => [...prev, newProduct])
       setFormData({
@@ -76,6 +85,7 @@ export function AdminDashboard() {
         price: '',
         stock: '',
       })
+      setImage(null)
       setShowAddProduct(false)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to add product'
@@ -169,6 +179,29 @@ export function AdminDashboard() {
                   placeholder="Product description"
                   className="input-base"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Product Image *
+                </label>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setImage(e.target.files[0])
+                    }
+                  }}
+                  className="input-base"
+                />
+
+                {image && (
+                  <p className="text-sm text-muted mt-2">
+                    Selected: {image.name}
+                  </p>
+                )}
               </div>
 
               <div>

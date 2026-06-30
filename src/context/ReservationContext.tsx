@@ -17,24 +17,22 @@ interface ReservationContextType {
 
 const ReservationContext = createContext<ReservationContextType | undefined>(undefined)
 
-const RESERVATION_DURATION_MS = 15 * 60 * 1000 // 15 minutes
-
 export function ReservationProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth()
   const [reservations, setReservations] = useState<StoredReservation[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { user } = useAuth()
 
-    /* Initialize from localStorage only when user is authenticated */
-  useEffect(() => {
-    if (user) {
-      const stored = storage.getReservations()
-      setReservations(stored)
-    } else {
-      /* Clear reservations when user logs out */
-      setReservations([])
-    }
-  }, [user])
+/* Initialize reservations whenever the authenticated user changes */
+useEffect(() => {
+  if (user?.email) {
+    const stored = storage.getReservations()
+    setReservations(stored)
+  } else {
+    // User logged out → clear cart from React state
+    setReservations([])
+  }
+}, [user?.email])
 
   /* Check for expired reservations every second */
   useEffect(() => {
@@ -63,7 +61,7 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
       const newReservation: StoredReservation = {
         id: response.reservationId,
         productId,
-        userId: '',
+        userId: storage.getUserEmail() ?? '',
         quantity,
         expiresAt: new Date(response.expiresAt).getTime(),
         createdAt: Date.now(),

@@ -12,13 +12,13 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onReserveSuccess }: ProductCardProps) {
  const [loading, setLoading] = useState(false)
-const [error, setError] = useState<string | null>(null)
-const [quantity, setQuantity] = useState(1)
-const { reserve } = useReservations()
-  const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const isOutOfStock = product.stock <= 0
-  const maxQuantity = product.stock
+ const [error, setError] = useState<string | null>(null)
+ const [quantity, setQuantity] = useState(1)
+ const { reserve } = useReservations()
+ const { isAuthenticated } = useAuth()
+ const navigate = useNavigate()
+ const isOutOfStock = product.stock <= 0
+ const maxQuantity = product.stock
 
   const handleReserve = async () => {
     if (!isAuthenticated) {
@@ -31,7 +31,8 @@ const { reserve } = useReservations()
     try {
       setError(null)
       setLoading(true)
-     await reserve(product.id, quantity)
+      await reserve(product.id, quantity)
+
       onReserveSuccess?.()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reserve'
