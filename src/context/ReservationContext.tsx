@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { StoredReservation, Product } from '../types'
 import { storage } from '../utils/storage'
 import { apiClient } from '../services/api'
+import { useAuth } from './AuthContext'
 
 interface ReservationContextType {
   reservations: StoredReservation[]
@@ -19,15 +20,16 @@ const ReservationContext = createContext<ReservationContextType | undefined>(und
 const RESERVATION_DURATION_MS = 15 * 60 * 1000 // 15 minutes
 
 export function ReservationProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth()
   const [reservations, setReservations] = useState<StoredReservation[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   /* Initialize from localStorage */
   useEffect(() => {
-    const stored = storage.getReservations()
-    setReservations(stored)
-  }, [])
+  const stored = storage.getReservations()
+  setReservations(stored)
+  }, [user?.email])
 
   /* Check for expired reservations every second */
   useEffect(() => {
@@ -56,7 +58,7 @@ export function ReservationProvider({ children }: { children: React.ReactNode })
       const newReservation: StoredReservation = {
         id: response.reservationId,
         productId,
-        userId: '',
+        userId: storage.getUserEmail() ?? '',
         quantity,
         expiresAt: new Date(response.expiresAt).getTime(),
         createdAt: Date.now(),

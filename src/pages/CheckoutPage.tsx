@@ -79,7 +79,22 @@ export function CheckoutPage() {
     try {
       setLoading(true)
 
-      const payment = await apiClient.initiatePayment(reservations[0].id)
+      console.log(
+        reservations.map(r => ({
+          id: r.id,
+          quantity: r.quantity,
+          product: products.get(r.productId)?.name,
+          price: products.get(r.productId)?.price,
+        }))
+      )
+
+      console.log("Frontend Total:", totalPrice)
+
+      const reservationIds = reservations.map(r => r.id)
+
+      console.log('Sending reservationIds:', reservationIds)
+
+      const payment = await apiClient.initiatePayment(reservationIds)
 
       // Redirect to Paystack
       window.location.href = payment.authorization_url

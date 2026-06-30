@@ -10,17 +10,22 @@ export class APIClient {
     this.token = token
   }
 
-  private getHeaders(includeAuth: boolean = true): HeadersInit {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    }
+ private getHeaders(
+  includeAuth: boolean = true,
+  isFormData: boolean = false
+): HeadersInit {
+  const headers: HeadersInit = {}
 
-    if (includeAuth && this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`
-    }
-
-    return headers
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json'
   }
+
+  if (includeAuth && this.token) {
+    headers['Authorization'] = `Bearer ${this.token}`
+  }
+
+  return headers
+}
 
   private async request<T>(
   endpoint: string,
@@ -30,13 +35,14 @@ export class APIClient {
 ): Promise<T> {
   const url = `${this.baseUrl}${endpoint}`
 
+  const isFormData = body instanceof FormData
   const options: RequestInit = {
     method,
-    headers: this.getHeaders(includeAuth),
+    headers: this.getHeaders(includeAuth, isFormData),
   }
 
   if (body) {
-    options.body = JSON.stringify(body)
+    options.body = isFormData ? body : JSON.stringify(body)
   }
 
   console.log('Request URL:', url)
@@ -92,9 +98,9 @@ export class APIClient {
     return this.request(`/products/${id}`, 'GET', undefined, false)
   }
 
-  async createProduct(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<Product> {
-    return this.request('/products', 'POST', product)
-  }
+  async createProduct(formData: FormData): Promise<Product> {
+  return this.request('/products', 'POST', formData)
+}
 
   async updateProduct(id: string, product: Partial<Product>): Promise<Product> {
     return this.request(`/products/${id}`, 'PUT', product)
@@ -122,7 +128,7 @@ export class APIClient {
 
   //Checkout Endpoint
   async initiatePayment(
-  reservationId: string
+  reservationIds: string[]
 ): Promise<{
   authorization_url: string
   access_code: string
@@ -131,7 +137,7 @@ export class APIClient {
   return this.request(
     '/payments/initiate',
     'POST',
-    { reservationId }
+    { reservationIds }
   )
 }
 

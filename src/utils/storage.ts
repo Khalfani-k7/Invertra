@@ -9,6 +9,14 @@ const KEYS = {
   PRODUCTS_CACHE: 'products_cache',
 }
 
+const getReservationKey = () => {
+  const email = localStorage.getItem(KEYS.USER_EMAIL)
+
+  return email
+    ? `${KEYS.RESERVATIONS}_${email}`
+    : KEYS.RESERVATIONS
+}
+
 export const storage = {
   /* Auth Storage */
   setAuthToken(token: string): void {
@@ -61,13 +69,16 @@ export const storage = {
 
   /* Reservations Storage */
   setReservations(reservations: StoredReservation[]): void {
-    localStorage.setItem(KEYS.RESERVATIONS, JSON.stringify(reservations))
-  },
+  localStorage.setItem(
+    getReservationKey(),
+    JSON.stringify(reservations)
+  )
+},
 
   getReservations(): StoredReservation[] {
-    const data = localStorage.getItem(KEYS.RESERVATIONS)
-    return data ? JSON.parse(data) : []
-  },
+  const data = localStorage.getItem(getReservationKey())
+  return data ? JSON.parse(data) : []
+},
 
   addReservation(reservation: StoredReservation): void {
     const reservations = this.getReservations()
@@ -81,8 +92,8 @@ export const storage = {
   },
 
   clearReservations(): void {
-    localStorage.removeItem(KEYS.RESERVATIONS)
-  },
+  localStorage.removeItem(getReservationKey())
+},
 
   /* Cache Storage */
   setProductsCache(products: unknown[]): void {

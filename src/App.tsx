@@ -8,6 +8,7 @@ import { CheckoutPage } from './pages/CheckoutPage'
 import { AdminLoginPage } from './pages/AdminLoginPage'
 import { AdminSignupPage } from './pages/AdminSignupPage'
 import { AdminDashboard } from './pages/AdminDashboard'
+import { PaymentSuccessPage } from './pages/PaymentSuccessPage'
 
 export function App() {
   return (
@@ -19,7 +20,8 @@ export function App() {
         <Route path="/signup" element={<UserSignupPage />} />
         <Route path="/login" element={<UserLoginPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />

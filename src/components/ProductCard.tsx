@@ -30,7 +30,7 @@ const { reserve } = useReservations()
     try {
       setError(null)
       setLoading(true)
-      await reserve(product.id, 1)
+      await reserve(product.id, quantity)
       onReserveSuccess?.()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reserve'
