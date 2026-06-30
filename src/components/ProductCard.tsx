@@ -92,33 +92,7 @@ const { reserve } = useReservations()
           <span className="text-2xl font-bold text-primary">{displayPrice(product.price)}</span>
           <span className="text-xs text-muted">Stock: {product.stock}</span>
         </div>
-        <div className="flex items-center justify-between gap-4 mb-4">
-  <span className="text-sm font-semibold">Quantity</span>
-
-  <div className="flex items-center border border-border rounded-lg overflow-hidden">
-    <button
-      type="button"
-      onClick={decreaseQuantity}
-      disabled={isOutOfStock || loading || quantity <= 1}
-      className="w-10 h-10 flex items-center justify-center bg-background hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-    >
-      -
-    </button>
-
-    <span className="w-12 h-10 flex items-center justify-center bg-secondary font-semibold">
-      {quantity}
-    </span>
-
-    <button
-      type="button"
-      onClick={increaseQuantity}
-      disabled={isOutOfStock || loading || quantity >= maxQuantity}
-      className="w-10 h-10 flex items-center justify-center bg-background hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-    >
-      +
-    </button>
-  </div>
-</div>
+       
         <div className="flex items-center justify-between gap-4 mb-4">
           <span className="text-sm font-semibold">Quantity</span>
 

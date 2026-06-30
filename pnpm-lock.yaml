@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      batch:
+        specifier: ^0.6.1
+        version: 0.6.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -601,6 +604,9 @@ packages:
   baseline-browser-mapping@2.9.19:
     resolution: {integrity: sha512-ipDqC8FrAl/76p2SSWKSI+H9tFwm7vYqXQrItCuiVPt26Km0jS+NzSsBWAaBusvSbQcfJG+JitdMm+wZAgTYqg==}
     hasBin: true
+
+  batch@0.6.1:
+    resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -1570,6 +1576,8 @@ snapshots:
   baseline-browser-mapping@2.10.38: {}
 
   baseline-browser-mapping@2.9.19: {}
+
+  batch@0.6.1: {}
 
   binary-extensions@2.3.0: {}
 
