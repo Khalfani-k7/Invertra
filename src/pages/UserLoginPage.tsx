@@ -36,12 +36,17 @@ export function UserLoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-block w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
-            <span className="text-background font-bold text-xl">I</span>
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-background font-bold text-xl">I</span>
+            </div>
+
+            <h1 className="text-3xl font-bold text-gradient">INVERTRA</h1>
           </div>
-          <h1 className="text-3xl font-bold text-gradient">INVERTRA</h1>
+
           <p className="text-muted mt-2">Welcome back</p>
         </div>
+
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="card space-y-4">
